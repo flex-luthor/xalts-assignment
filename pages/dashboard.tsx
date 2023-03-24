@@ -18,6 +18,7 @@ export default function Dashboard() {
   const [walletName, setWalletName] = useState("");
   const [balance, setBalance] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
+  const [buttonLabel, setButtonLabel] = useState("Connect");
   const { address, isConnected } = useAccount();
   const { connectAsync } = useConnect({
     connector: new InjectedConnector(),
@@ -34,7 +35,11 @@ export default function Dashboard() {
   useEffect(() => {
     if (isConnected) {
       setWalletAddress(address);
-    } else setWalletAddress("");
+      setButtonLabel("Disconnect");
+    } else {
+      setWalletAddress("");
+      setButtonLabel("Connect");
+    }
   }, [isConnected]);
 
   const handleConnect = async () => {
@@ -46,7 +51,7 @@ export default function Dashboard() {
         setBalance(web3.utils.fromWei(data, "ether"));
         setMessage(
           `Hi ${name || "Anon"}, Your ${walletName} wallet has a balance of ${
-            balance + " MATIC" || "0.00 MATIC"
+            (balance || "0.0") + " MATIC"
           }`
         );
         setMessageOpen(true);
@@ -125,7 +130,7 @@ export default function Dashboard() {
               </td>
               <td>
                 <Button
-                  title={isConnected ? "Disconnect" : "Connect"}
+                  title={buttonLabel}
                   onClick={isConnected ? disconnect : handleConnect}
                 />
               </td>
